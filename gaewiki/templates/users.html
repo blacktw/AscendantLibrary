@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div id="pb">
+  <h1>Known users</h1>
+{% if is_admin %}
+  <form action="/w/users" method="POST" >
+    <table class="userlist">
+      <thead>
+        <tr>
+          <th>Charater Name</th>
+          <th>First activity</th>
+          <th>Editor</th>
+          <th>Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td><a href="/user%3A{{ user.get_nickname()|uurlencode }}">{{ user.get_nickname()|escape }}</a></td>
+          <td>{{ user.joined|timezone|date("%Y-%m-%d") }}</td>
+          <td><input type="checkbox" name="edit_{{ user.wiki_user.user_id() }}" {% if user.editor_access %}checked{% endif %} />
+          <td><input type="checkbox" name="staff_{{ user.wiki_user.user_id() }}" {% if user.staff_access %}checked{% endif %} />
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <input type="submit" name="Save" value="Save Changes" />
+  </form>
+{% else %}
+  <table class="userlist">
+    <thead>
+      <tr>
+        <th>Character</th>
+        <th>First activity</th>
+        <th>Roles</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <td><a href="/user%3A{{ user.get_nickname()|uurlencode }}">{{ user.get_nickname()|escape }}</a></td>
+        <td>{{ user.joined|timezone|date("%Y-%m-%d") }}</td>
+        <td>{% if user.staff_access %}<span title="Member of Ascendant Staff">(S)</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+</div>
+{% endblock %}
